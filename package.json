@@ -1,0 +1,25 @@
+{
+  "name": "onus",
+  "version": "0.1.0",
+  "description": "opinionated boilerplate-free component",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-components/onus.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Cameron Bytheway <bytheway.cameron@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/react-components/onus/issues"
+  },
+  "homepage": "https://github.com/react-components/onus",
+  "dependencies": {
+    "utils-merge": "^1.0.0"
+  }
+}
