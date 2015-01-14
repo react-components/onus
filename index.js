@@ -43,7 +43,6 @@ exports['default'] = exports = module.exports = createComponent;
  */
 
 var lifecycle = [
-  'componentWillMount',
   'componentDidMount',
   'componentWillReceiveProps',
   'shouldComponentUpdate',
@@ -83,7 +82,7 @@ function createComponent(conf, filename) {
     contextTypes: merge({
       store: ReactObj.isRequired,
       forms: ReactObj,
-      translate: ReactFunc,
+      translate: ReactObj,
       errorHandler: ReactFunc,
       encodeParams: ReactFunc,
       decodeParams: ReactFunc
@@ -108,6 +107,8 @@ function createComponent(conf, filename) {
           self.forceUpdate();
         };
       }
+
+      if (conf.componentWillMount) conf.componentWillMount.call(this);
     },
 
     componentWillUnmount: function() {
