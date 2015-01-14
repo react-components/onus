@@ -9,6 +9,7 @@ var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 var LoadingStatusMixin = require('react-loading-status-mixin');
 var merge = require('utils-merge');
+var raf = require('raf');
 
 /**
  * Load the function initializers
@@ -55,12 +56,15 @@ var lifecycle = [
  * Create an Onus component
  */
 
-function createComponent(conf) {
+function createComponent(conf, filename) {
+  // TODO handle module.hot
 
   // create a mixin with the defined lifecycle events
   var events = {};
   for (var i = 0, event; i < lifecycle.length; i++) {
-    if (conf[events]) events[event] = module.hot ? hotReload(conf, event) : conf[event];
+    event = lifecycle[i];
+    // TODO bind all in module.hot with default functions
+    if (conf[event]) events[event] = module.hot ? hotReload(conf, event) : conf[event];
   }
 
   // load the standard mixins
@@ -86,24 +90,21 @@ function createComponent(conf) {
     }, conf.contextTypes),
 
     __onus_onStoreChange: function() {
-      this.forceUpdate();
+      var self = this;
+      self.isMounted() && self.forceUpdate();
     },
 
     componentWillMount: function() {
       var self = this;
       var context = self.context;
 
-      var store = self._store = context.store;
-
-      var id = self._nodeID;
-
-      store.on(id, self.__onus_onStoreChange);
-      self._t = self._t || context.translate ? context.translate(id) : noop;
+      var store = self._store = context.store.context(self.__onus_onStoreChange);
+      self._t = self._t || context.translate ? context.translate(store) : noop;
 
       self._error_handler = self._error_handler || context.errorHandler || noop;
 
       if (module.hot) {
-        (conf.__subs = conf.__subs || {})[id] = function() {
+        (conf.__subs = conf.__subs || {})[this._rootNodeID] = function() {
           self.forceUpdate();
         };
       }
@@ -111,8 +112,8 @@ function createComponent(conf) {
 
     componentWillUnmount: function() {
       var self = this;
-      if (module.hot) delete conf.__subs[self._nodeID];
-      self.store.off(self._nodeID, self.__onus_onStoreChange);
+      if (module.hot) delete conf.__subs[self._rootNodeID];
+      self._store.destroy();
     },
 
     statics: conf.statics,
@@ -126,6 +127,20 @@ function createComponent(conf) {
     _render: conf._render || (module.hot ?
       createRenderFn(conf, dom, noop, hotReload) :
       createRenderFn(conf, dom, noop)),
+
+    // TODO
+    _error: function(DOM,
+      get,
+      props,
+      state,
+      _yield,
+      params,
+      query,
+      forms,
+      t,
+      err) {
+      console.error(err.stack || err);
+    },
 
     loadedClassName: conf.loadedClassName || 'loaded',
 
@@ -165,9 +180,10 @@ function _yield(name) {
   if (!name) return props.children ? props.children : dom(RouteHandler);
 
   var prop = props[name];
-  return typeof prop === 'function' ?
-    prop.apply(this, Array.prototype.slice.call(arguments, 1)) :
-    prop;
+  if (typeof prop !== 'function') return prop;
+  var args = Array.prototype.slice.call(arguments, 1);
+  args.push(this._store.get);
+  return prop.apply(this, args);
 }
 
 /**
