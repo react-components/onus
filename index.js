@@ -99,7 +99,7 @@ function createComponent(conf, filename) {
       var context = self.context;
 
       var store = self._store = context.store.context(self.__onus_onStoreChange);
-      self._t = self._t || context.translate ? context.translate(store) : noop;
+      self._t = self._t || context.translate ? context.translate.context(store) : noop;
 
       self._error_handler = self._error_handler || context.errorHandler || noop;
 

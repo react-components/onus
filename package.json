@@ -21,5 +21,8 @@
   "homepage": "https://github.com/react-components/onus",
   "dependencies": {
     "utils-merge": "^1.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=0.12.0"
   }
 }
