@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/react-components/onus",
   "dependencies": {
+    "react-clonewithprops": "^1.0.1",
     "utils-merge": "^1.0.0"
   },
   "peerDependencies": {
