@@ -151,6 +151,10 @@ function createComponent(conf, filename) {
     }
   };
 
+  if (conf.initialState) component.getInitialState = function() {
+    return conf.initialState;
+  };
+
   for (var k in conf) {
     if (component[k] || !conf.hasOwnProperty(k) || events[k]) continue;
     component[k] = conf[k];
