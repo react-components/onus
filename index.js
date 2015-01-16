@@ -62,8 +62,7 @@ function createComponent(conf, filename) {
   var events = {};
   for (var i = 0, event; i < lifecycle.length; i++) {
     event = lifecycle[i];
-    // TODO bind all in module.hot with default functions
-    if (conf[event]) events[event] = module.hot ? hotReload(conf, event) : conf[event];
+    if (conf[event]) events[event] = conf[event];
   }
 
   // load the standard mixins
@@ -119,15 +118,11 @@ function createComponent(conf, filename) {
 
     statics: conf.statics,
 
-    _DOM: conf._DOM || (module.hot ?
-      createDomFn(conf, dom, noop, Link, hotReload) :
-      createDomFn(conf, dom, noop, Link)),
+    _DOM: conf._DOM || createDomFn(conf, dom, noop, Link),
 
     _yield: conf._yield || _yield,
 
-    _render: conf._render || (module.hot ?
-      createRenderFn(conf, dom, noop, hotReload) :
-      createRenderFn(conf, dom, noop)),
+    _render: conf._render || createRenderFn(conf, dom, noop),
 
     // TODO
     _error: function(DOM,
@@ -158,14 +153,7 @@ function createComponent(conf, filename) {
 
   for (var k in conf) {
     if (component[k] || !conf.hasOwnProperty(k) || events[k]) continue;
-
-    if (module.hot) {
-      component[k] = typeof conf[k] === 'function' ?
-        hotReload(conf, k) :
-        conf[k];
-    } else {
-      component[k] = conf[k];
-    }
+    component[k] = conf[k];
   }
 
   return React.createClass(component);
@@ -184,15 +172,4 @@ function _yield(name) {
   if (typeof prop !== 'function') return prop;
   var args = Array.prototype.slice.call(arguments, 1);
   return prop.apply(this._store.get, args);
-}
-
-/**
- * Wrap a function for hot reload goodness
- */
-
-function hotReload(conf, name) {
-  return function() {
-    var fn = conf[name];
-    return fn && fn.apply(this, arguments);
-  };
 }
