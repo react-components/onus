@@ -183,8 +183,7 @@ function _yield(name) {
   var prop = props[name];
   if (typeof prop !== 'function') return prop;
   var args = Array.prototype.slice.call(arguments, 1);
-  args.push(this._store.get);
-  return prop.apply(this, args);
+  return prop.apply(this._store.get, args);
 }
 
 /**
