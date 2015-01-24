@@ -9,7 +9,6 @@ var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 var LoadingStatusMixin = require('react-loading-status-mixin');
 var merge = require('utils-merge');
-var raf = require('raf');
 
 /**
  * Load the function initializers
