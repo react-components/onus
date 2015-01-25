@@ -55,8 +55,6 @@ var lifecycle = [
  */
 
 function createComponent(conf, filename) {
-  // TODO handle module.hot
-
   // create a mixin with the defined lifecycle events
   var events = {};
   for (var i = 0, event; i < lifecycle.length; i++) {
