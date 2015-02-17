@@ -95,7 +95,7 @@ function createComponent(conf, filename) {
 
       var store = self._store = context.store.context(self.__onus_onStoreChange);
       self._t = self._t || context.translate ? context.translate.context(store) : noop;
-
+      self.forms = self.context.forms;
       self._error_handler = self._error_handler || context.errorHandler || noop;
 
       if (module.hot) {
