@@ -7,7 +7,6 @@ var dom = React.createElement;
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
-var LoadingStatusMixin = require('react-loading-status-mixin');
 var merge = require('utils-merge');
 
 /**
@@ -16,6 +15,7 @@ var merge = require('utils-merge');
 
 var createRenderFn = require('./lib/render-fn');
 var createDomFn = require('./lib/dom-fn');
+var loadingStatus = require('./lib/loading-status');
 
 /**
  * noop
@@ -66,7 +66,7 @@ function createComponent(conf, filename) {
   var mixins = [
     Router.State,
     Router.Navigation,
-    LoadingStatusMixin,
+    loadingStatus,
     events
   ].concat(conf.mixins || []);
 
