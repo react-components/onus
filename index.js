@@ -135,9 +135,9 @@ function createComponent(conf, filename) {
       console.error(err.stack || err);
     },
 
-    loadedClassName: conf.loadedClassName || 'loaded',
+    loadedClassName: conf.loadedClassName || 'is-loaded',
 
-    loadingClassName: conf.loadingClassName || 'loading',
+    loadingClassName: conf.loadingClassName || 'is-loading',
 
     componentClassName: conf.componentClassName || conf.displayName + '-component',
 
