@@ -16,6 +16,7 @@ var merge = require('utils-merge');
 var createRenderFn = require('./lib/render-fn');
 var createDomFn = require('./lib/dom-fn');
 var loadingStatus = require('./lib/loading-status');
+var Navigation = require('./lib/navigation');
 
 /**
  * noop
@@ -65,7 +66,7 @@ function createComponent(conf, filename) {
   // load the standard mixins
   var mixins = [
     Router.State,
-    Router.Navigation,
+    Navigation,
     loadingStatus,
     events
   ].concat(conf.mixins || []);
