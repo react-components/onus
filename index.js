@@ -165,13 +165,13 @@ function createComponent(conf, filename) {
  * Wrap the yield function
  */
 
-function _yield(name) {
+function _yield(name, $get, t) {
   var props = this.props;
 
   if (!name) return props.children ? props.children : dom(RouteHandler);
 
   var prop = props[name];
   if (typeof prop !== 'function') return prop;
-  var args = Array.prototype.slice.call(arguments, 1);
-  return prop.apply({g: this._store.get, t: this._t}, args);
+  var args = Array.prototype.slice.call(arguments, 3);
+  return prop.apply({g: $get, t: t}, args);
 }
