@@ -85,7 +85,7 @@ function createComponent(conf, filename) {
       decodeParams: ReactFunc
     }, conf.contextTypes),
 
-    __onus_onStoreChange: function() {
+    __onus_onStoreChange: function(href) {
       var self = this;
       self.isMounted() && self.forceUpdate();
     },
@@ -136,6 +136,30 @@ function createComponent(conf, filename) {
       console.error(err.stack || err);
     },
 
+    equalPairs: function() {
+      var a = arguments;
+      for (var i = 0; i < a.length; i+=2) {
+        if (!this.isEqual(a[i], a[i + 1])) return false;
+      }
+      return true;
+    },
+
+    isEqual: function(a, b) {
+      var typeA = typeof a;
+      var typeB = typeof b
+      // the types have changed
+      if (typeA !== typeB) return false;
+      // scalars
+      if (a === b) return true;
+      // defined values
+      if (a && b) {
+        if (typeof a.__hash !== 'undefined' && typeof b.__hash !== 'undefined') return a.__hash === b.__hash;
+        if (typeof a.hashCode === 'function' && typeof b.hashCode === 'function') return a.hashCode() === b.hashCode();
+      }
+      // TODO add other comparisons
+      return false;
+    },
+
     loadedClassName: conf.loadedClassName || 'is-loaded',
 
     loadingClassName: conf.loadingClassName || 'is-loading',
@@ -145,6 +169,14 @@ function createComponent(conf, filename) {
     render: function() {
       // TODO see if we can cache this
       // TODO detect any recursive re-renders
+      if (process.env.NODE_ENV === 'development') {
+        if (typeof window !== 'undefined') {
+          onus.renderCounts[conf.displayName] |= 0;
+          onus.renderCounts[conf.displayName]++;
+          onus.renderTotal++;
+        }
+      }
+
       return this._render();
     }
   };
@@ -159,6 +191,19 @@ function createComponent(conf, filename) {
   }
 
   return React.createClass(component);
+}
+
+if (process.env.NODE_ENV === 'development') {
+  if (typeof window !== 'undefined') {
+    window.onus = {
+      renderCounts: {},
+      renderTotal: 0,
+      reset: function() {
+        onus.renderCounts = {};
+        onus.renderTotal = 0;
+      }
+    };
+  }
 }
 
 /**
