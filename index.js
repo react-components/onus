@@ -95,6 +95,7 @@ function createComponent(conf, filename) {
       var context = self.context;
 
       var store = self._store = context.store.context(self.__onus_onStoreChange);
+      if (context.store.getAsync) self.getAsync = context.store.getAsync.bind(context.store);
       self._t = self._t || context.translate ? context.translate.context(store) : noop;
       self.forms = self.context.forms;
       self._error_handler = self._error_handler || context.errorHandler || noop;
