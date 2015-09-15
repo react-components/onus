@@ -17,6 +17,7 @@ var createRenderFn = require('./lib/render-fn');
 var createDomFn = require('./lib/dom-fn');
 var loadingStatus = require('./lib/loading-status');
 var Navigation = require('./lib/navigation');
+var Params = require('./lib/params');
 
 /**
  * noop
@@ -67,6 +68,7 @@ function createComponent(conf, filename) {
   var mixins = [
     Router.State,
     Navigation,
+    Params,
     loadingStatus,
     events
   ].concat(conf.mixins || []);
