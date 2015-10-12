@@ -31,7 +31,7 @@ function noop(a) { return a; }
 
 var PropTypes = React.PropTypes;
 var ReactObj = PropTypes.object;
-var ReactFunc = PropTypes.func
+var ReactFunc = PropTypes.func;
 
 /**
  * expose component creation
@@ -84,7 +84,8 @@ function createComponent(conf, filename) {
       translate: ReactObj,
       errorHandler: ReactFunc,
       encodeParams: ReactFunc,
-      decodeParams: ReactFunc
+      decodeParams: ReactFunc,
+      events: ReactFunc
     }, conf.contextTypes),
 
     __onus_onStoreChange: function(href) {
@@ -185,7 +186,11 @@ function createComponent(conf, filename) {
   };
 
   if (conf.initialState) component.getInitialState = function() {
-    return conf.initialState;
+    var state = {};
+    for (var k in conf.initialState) {
+      state[k] = conf.initialState[k];
+    }
+    return state;
   };
 
   for (var k in conf) {
