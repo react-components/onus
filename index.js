@@ -18,6 +18,7 @@ var createDomFn = require('./lib/dom-fn');
 var loadingStatus = require('./lib/loading-status');
 var Navigation = require('./lib/navigation');
 var Params = require('./lib/params');
+var cast = require('./lib/cast');
 
 /**
  * noop
@@ -64,13 +65,15 @@ function createComponent(conf, filename) {
     if (conf[event]) events[event] = conf[event];
   }
 
+
   // load the standard mixins
   var mixins = [
     Router.State,
     Navigation,
     Params,
     loadingStatus,
-    events
+    events,
+    cast
   ].concat(conf.mixins || []);
 
   var component = {
