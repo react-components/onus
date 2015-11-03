@@ -65,7 +65,6 @@ function createComponent(conf, filename) {
     if (conf[event]) events[event] = conf[event];
   }
 
-
   // load the standard mixins
   var mixins = [
     Router.State,
