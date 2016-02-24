@@ -86,7 +86,7 @@ function createComponent(conf, filename) {
       encodeParams: ReactFunc,
       decodeParams: ReactFunc,
       events: ReactFunc,
-      features: ReactObj
+      canary: ReactObj
     }, conf.contextTypes),
 
     __onus_onStoreChange: function(href) {
@@ -102,7 +102,7 @@ function createComponent(conf, filename) {
       if (context.store.getAsync) self.getAsync = context.store.getAsync.bind(context.store);
       self._t = self._t || context.translate ? context.translate.context(store) : noop;
       self.forms = self.context.forms;
-      self.features = context.features.context(self.__onus_onStoreChange);
+      self.canary = context.canary.context(self.__onus_onStoreChange);
       self._error_handler = self._error_handler || context.errorHandler || noop;
 
       if (module.hot) {
