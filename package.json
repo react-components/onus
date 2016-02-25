@@ -1,6 +1,6 @@
 {
   "name": "onus",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "opinionated boilerplate-free component",
   "main": "index.js",
   "scripts": {
