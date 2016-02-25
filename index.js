@@ -220,13 +220,13 @@ if (process.env.NODE_ENV === 'development') {
  * Wrap the yield function
  */
 
-function _yield(name, $get, t) {
+function _yield(name, context) {
   var props = this.props;
 
   if (!name) return props.children ? props.children : dom(RouteHandler);
 
   var prop = props[name];
   if (typeof prop !== 'function') return prop;
-  var args = Array.prototype.slice.call(arguments, 3);
-  return prop.apply({g: $get, t: t}, args);
+  var args = Array.prototype.slice.call(arguments, 2);
+  return prop.apply(context, args);
 }
