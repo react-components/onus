@@ -24,8 +24,8 @@
     "utils-merge": "^1.0.0"
   },
   "peerDependencies": {
+    "onus-router": "^0.1.0",
     "react": ">=0.12.2",
-    "react-loading-status-mixin": "^0.1.3",
-    "react-router": ">=0.11.6"
+    "react-loading-status-mixin": "^0.1.3"
   }
 }

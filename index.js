@@ -4,9 +4,6 @@
 
 var React = require('react');
 var dom = React.createElement;
-var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
-var Link = Router.Link;
 var merge = require('utils-merge');
 
 /**
@@ -16,8 +13,6 @@ var merge = require('utils-merge');
 var createRenderFn = require('./lib/render-fn');
 var createDomFn = require('./lib/dom-fn');
 var loadingStatus = require('./lib/loading-status');
-var Navigation = require('./lib/navigation');
-var Params = require('./lib/params');
 
 /**
  * noop
@@ -52,6 +47,8 @@ var lifecycle = [
   'componentWillUnmount'
 ];
 
+var nextComponentId = 0;
+
 /**
  * Create an Onus component
  */
@@ -66,9 +63,6 @@ function createComponent(conf, filename) {
 
   // load the standard mixins
   var mixins = [
-    Router.State,
-    Navigation,
-    Params,
     loadingStatus,
     events
   ].concat(conf.mixins || []);
@@ -83,10 +77,9 @@ function createComponent(conf, filename) {
       forms: ReactObj,
       translate: ReactObj,
       errorHandler: ReactFunc,
-      encodeParams: ReactFunc,
-      decodeParams: ReactFunc,
+      format: ReactObj,
       events: ReactFunc,
-      canary: ReactObj
+      router: ReactObj
     }, conf.contextTypes),
 
     __onus_onStoreChange: function(href) {
@@ -101,12 +94,31 @@ function createComponent(conf, filename) {
       var store = self._store = context.store.context(self.__onus_onStoreChange);
       if (context.store.getAsync) self.getAsync = context.store.getAsync.bind(context.store);
       self._t = self._t || context.translate ? context.translate.context(store) : noop;
-      self.forms = self.context.forms;
       if (context.canary) self.canary = context.canary.context(self.__onus_onStoreChange);
+
+      Object.defineProperties(self, {
+        forms: {
+          get: function() {
+            return context.forms;
+          }
+        },
+        router: {
+          get: function() {
+            return context.router;
+          }
+        },
+        location: {
+          get: function() {
+            return context.router.location;
+          }
+        }
+      });
+
       self._error_handler = self._error_handler || context.errorHandler || noop;
 
       if (module.hot) {
-        (conf.__subs = conf.__subs || {})[this._rootNodeID] = function() {
+        self.__onusComponentId = nextComponentId++;
+        (conf.__subs = conf.__subs || {})[self.__onusComponentId] = function() {
           self.forceUpdate();
         };
       }
@@ -116,17 +128,18 @@ function createComponent(conf, filename) {
 
     componentWillUnmount: function() {
       var self = this;
-      if (module.hot) delete conf.__subs[self._rootNodeID];
+      if (module.hot) delete conf.__subs[self.__onusComponentId];
       self._store.destroy();
+      if (self.canary) self.canary.destroy();
     },
 
     statics: conf.statics,
 
-    _DOM: conf._DOM || createDomFn(conf, dom, noop, Link),
+    _DOM: conf._DOM || createDomFn(conf, dom),
 
     _yield: conf._yield || _yield,
 
-    _render: conf._render || createRenderFn(conf, dom, noop),
+    _render: conf._render || createRenderFn(conf, dom),
 
     // TODO
     _error: function(DOM,
@@ -139,7 +152,8 @@ function createComponent(conf, filename) {
       forms,
       t,
       err) {
-      console.error(err.stack || err);
+      if (err) console.error(err.stack || err);
+      return false;
     },
 
     equalPairs: function() {
@@ -221,12 +235,9 @@ if (process.env.NODE_ENV === 'development') {
  */
 
 function _yield(name, context) {
-  var props = this.props;
-
-  if (!name) return props.children ? props.children : dom(RouteHandler);
-
-  var prop = props[name];
+  var prop = this.props[name || 'children'];
   if (typeof prop !== 'function') return prop;
+
   var args = Array.prototype.slice.call(arguments, 2);
   return prop.apply(context, args);
 }
