@@ -73,13 +73,14 @@ function createComponent(conf, filename) {
     mixins: mixins,
 
     contextTypes: merge({
-      store: ReactObj.isRequired,
-      forms: ReactObj,
-      translate: ReactObj,
+      canary: ReactObj,
       errorHandler: ReactFunc,
-      format: ReactObj,
       events: ReactFunc,
-      router: ReactObj
+      format: ReactObj,
+      forms: ReactObj,
+      router: ReactObj,
+      store: ReactObj.isRequired,
+      translate: ReactObj,
     }, conf.contextTypes),
 
     __onus_onStoreChange: function(href) {
